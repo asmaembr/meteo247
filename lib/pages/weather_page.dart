@@ -13,6 +13,7 @@ class WeatherPage extends StatefulWidget {
 class _WeatherPageState extends State<WeatherPage> {
   final _weatherService = WeatherService('3f25316e9d2fa4d12e679dc9184bae0e');
   Weather? _weather;
+  Map<String, List<Weather>> _forecast = {};
 
   // Fetch weather data
   Future<void> _fetchWeather() async {
@@ -20,14 +21,19 @@ class _WeatherPageState extends State<WeatherPage> {
 
     try {
       final weather = await _weatherService.getWeather(cityName);
+      final position = await _weatherService.getCurrentPosition();
+      final forecast = await _weatherService.get5DayForecast(position);
+
       setState(() {
         _weather = weather;
+        _forecast = forecast;
       });
     } catch (e) {
       print(e);
     }
   }
 
+//translate the weather condition
   String translateCondition(String? condition) {
     switch (condition) {
       case 'Clear':
@@ -48,8 +54,9 @@ class _WeatherPageState extends State<WeatherPage> {
         return 'Chargement...';
     }
   }
+
   // Weather animations
- String getWeatherAnimation() {
+  String getWeatherAnimation() {
     if (_weather == null) {
       return 'assets/loading.json';
     }
@@ -81,7 +88,26 @@ class _WeatherPageState extends State<WeatherPage> {
     }
   }
 
-
+// Weather animations for 5day forecast
+  String getWeatherAnimationForForecast(Weather weather) {
+    switch (weather.mainCondition) {
+      case 'Clear':
+        return 'assets/sunny.json';
+      case 'Clouds':
+        return 'assets/sunnycloudy.json';
+      case 'Rain':
+        return 'assets/rainy.json';
+      case 'Snow':
+        return 'assets/snowy.json';
+      case 'Thunderstorm':
+        return 'assets/rainy.json';
+      case 'Fog':
+      case 'Mist':
+        return 'assets/windy.json';
+      default:
+        return 'assets/loading.json';
+    }
+  }
 
   // Init state
   @override
@@ -89,19 +115,21 @@ class _WeatherPageState extends State<WeatherPage> {
     super.initState();
     _fetchWeather();
   }
-  
-@override
+
+  // Build the UI view
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          Positioned.fill(child: Image.asset(
-            'assets/bg.jpg',
-            fit: BoxFit.cover,
-          ),
+          Positioned.fill(
+            child: Image.asset(
+              'assets/bg.jpg',
+              fit: BoxFit.cover,
+            ),
           ),
           Container(
-            color: Colors.white60, 
+            color: Colors.white60,
           ),
           RefreshIndicator(
             onRefresh: _fetchWeather,
@@ -111,33 +139,75 @@ class _WeatherPageState extends State<WeatherPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 50),
+                    const SizedBox(height: 20),
                     Text(
                       _weather?.cityName ?? 'Chargement de la ville...',
                       style: const TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold)
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Lottie.asset(
                       getWeatherAnimation(),
-                      width: 250,
                       height: 250,
                     ),
                     Text(
                       '${_weather?.temperature.round() ?? ''}°C',
                       style: const TextStyle(
-                          fontSize: 45,
-                          fontWeight: FontWeight.bold,
-                         ), 
+                        fontSize: 45,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
                       translateCondition(_weather?.mainCondition),
                       style: const TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                      ),
                     ),
-                    const SizedBox(height: 50),
+                    const SizedBox(height: 20),
+                    // Displaying the 5-day forecast
+                    Column(
+                      children: _forecast.keys.map((date) {
+                        List<Weather> dailyWeather = _forecast[date]!;
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: dailyWeather.map((hourlyWeather) {
+                            return Column(
+                              children: [
+                                Text(
+                                  '${hourlyWeather.date.hour}:00',
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Lottie.asset(
+                                  getWeatherAnimationForForecast(hourlyWeather),
+                                  height: 50,
+                                  width: 50,
+                                ),
+                                Text(
+                                  '${hourlyWeather.temperature.round()}°C',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(
+                                  translateCondition(
+                                      hourlyWeather.mainCondition),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                        );
+                      }).toList(),
+                    ),
                   ],
                 ),
               ),
@@ -147,5 +217,4 @@ class _WeatherPageState extends State<WeatherPage> {
       ),
     );
   }
-
 }

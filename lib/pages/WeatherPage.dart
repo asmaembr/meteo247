@@ -4,8 +4,15 @@ import 'package:meteo247/models/weather_model.dart';
 
 class WeatherPage extends StatelessWidget {
   final Weather? weather;
+  final bool isDarkMode;
+  final bool isDay;
 
-  const WeatherPage({super.key, required this.weather});
+  const WeatherPage({
+    super.key,
+    required this.weather,
+    required this.isDarkMode,
+    required this.isDay,
+  });
 
   // Weather animations
   String getWeatherAnimation(Weather? weather) {
@@ -63,25 +70,33 @@ class WeatherPage extends StatelessWidget {
         children: [
           Text(
             weather?.cityName ?? 'Chargement de la ville...',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.bold,
+              color: isDarkMode
+                  ? (isDay ? Colors.white : Colors.white70)
+                  : (isDay ? Colors.black : Colors.grey[800]),
             ),
           ),
           Lottie.asset(getWeatherAnimation(weather), height: 250),
           Text(
             '${weather?.temperature.round() ?? ''}°C',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 45,
               fontWeight: FontWeight.bold,
+              color: isDarkMode
+                  ? (isDay ? Colors.white : Colors.white70)
+                  : (isDay ? Colors.black : Colors.grey[800]),
             ),
           ),
           Text(
             translateCondition(weather?.mainCondition),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 25,
               fontWeight: FontWeight.bold,
-              color: Colors.black54,
+              color: isDarkMode
+                  ? Colors.white70
+                  : (isDay ? Colors.black54 : Colors.grey[700]),
             ),
           ),
         ],

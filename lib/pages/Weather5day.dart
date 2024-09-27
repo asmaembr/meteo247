@@ -30,17 +30,23 @@ class Weather5day extends StatelessWidget {
 
   // Weather animations for 5-day forecast
   String getWeatherAnimationForForecast(Weather weather) {
+    // Determine if it's day or night based on the hour
+    int hour = weather.date.hour;
+    bool isDaytime = hour >= 6 && hour < 18; 
+
     switch (weather.mainCondition) {
       case 'Clear':
-        return 'assets/sunny.json';
+        return isDaytime ? 'assets/sunny.json' : 'assets/moon.json';
       case 'Clouds':
-        return 'assets/sunnycloudy.json';
+        return isDaytime
+            ? 'assets/sunnycloudy.json'
+            : 'assets/cloudynight.json';
       case 'Rain':
-        return 'assets/rainy.json';
+        return isDaytime ? 'assets/rainy.json' : 'assets/rainynight.json';
       case 'Snow':
-        return 'assets/snowy.json';
+        return isDaytime ? 'assets/snowy.json' : 'assets/snowynight.json';
       case 'Thunderstorm':
-        return 'assets/rainy.json';
+        return isDaytime ? 'assets/rainy.json' : 'assets/rainynight.json';
       case 'Fog':
       case 'Mist':
         return 'assets/windy.json';

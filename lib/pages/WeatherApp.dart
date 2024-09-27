@@ -16,6 +16,7 @@ class _WeatherAppState extends State<WeatherApp> {
   Weather? _weather;
   Map<String, List<Weather>> _forecast = {};
   final PageController _pageController = PageController();
+  bool _isDarkMode = false;
 
   // Fetch weather data
   Future<void> _fetchWeather() async {
@@ -29,10 +30,17 @@ class _WeatherAppState extends State<WeatherApp> {
       setState(() {
         _weather = weather;
         _forecast = forecast;
+        _isDarkMode =
+            !weather.isDay; // Set dark mode based on current day/night
       });
     } catch (e) {
       print(e);
     }
+  }
+
+  // Refresh weather data
+  Future<void> _refreshWeather() async {
+    await _fetchWeather();
   }
 
   @override
@@ -41,87 +49,108 @@ class _WeatherAppState extends State<WeatherApp> {
     _fetchWeather();
   }
 
+  void _toggleTheme() {
+    setState(() {
+      _isDarkMode = !_isDarkMode; // Allow manual theme toggling
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              color: Colors.white
-             /* image: DecorationImage(
-                image: AssetImage('assets/bg.jpg'), 
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(
-                  Colors.white54, BlendMode.lighten)
-              ),*/
+    return MaterialApp(
+      theme: _isDarkMode ? ThemeData.dark() : ThemeData.light(),
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Stack(
+          children: [
+            Container(
+              color: _isDarkMode ? Colors.black : Colors.white,
             ),
-          ),
-          PageView(
-            controller: _pageController,
-            scrollDirection: Axis.vertical,
-            children: [
-              // Weather Page
-              Stack(
+            RefreshIndicator(
+              onRefresh: _refreshWeather,
+              child: PageView(
+                controller: _pageController,
+                scrollDirection: Axis.vertical,
                 children: [
-                  WeatherPage(weather: _weather),
-                  Positioned(
-                    bottom: 20,
-                    left: 20,
-                    right: 20,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_pageController.page! < 1) {
-                          _pageController.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeIn,
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white70,
-                        shape: const CircleBorder(),
+                  // Weather Page
+                  Stack(
+                    children: [
+                      WeatherPage(
+                        weather: _weather,
+                        isDarkMode: _isDarkMode,
+                        isDay: _weather?.isDay ?? true,
                       ),
-                      child: const Icon(
-                        Icons.arrow_downward,
-                        color: Colors.black, 
+                      Positioned(
+                        top: 20,
+                        right: 20,
+                        child: IconButton(
+                          icon: Icon(
+                            _isDarkMode ? Icons.wb_sunny : Icons.nights_stay,
+                            color: _isDarkMode ? Colors.white : Colors.black,
+                            size: 50,
+                          ),
+                          onPressed: _toggleTheme,
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        bottom: 20,
+                        left: 20,
+                        right: 20,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_pageController.page! < 1) {
+                              _pageController.nextPage(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeIn,
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white70,
+                            shape: const CircleBorder(),
+                          ),
+                          child: const Icon(
+                            Icons.arrow_downward,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Weather 5 Day Page
+                  Stack(
+                    children: [
+                      Weather5day(forecast: _forecast),
+                      Positioned(
+                        top: 20,
+                        left: 20,
+                        right: 20,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_pageController.page! > 0) {
+                              _pageController.previousPage(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeIn,
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white70,
+                            shape: const CircleBorder(),
+                          ),
+                          child: const Icon(
+                            Icons.arrow_upward,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              // Weather 5 Day Page
-              Stack(
-                children: [
-                  Weather5day(forecast: _forecast),
-                  Positioned(
-                    top: 20,
-                    left: 20,
-                    right: 20,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_pageController.page! > 0) {
-                          _pageController.previousPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeIn,
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white70,
-                        shape: const CircleBorder(),
-                      ),
-                      child: const Icon(
-                        Icons.arrow_upward,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

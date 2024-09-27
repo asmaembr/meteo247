@@ -96,12 +96,12 @@ class _WeatherPageState extends State<WeatherPage> {
       body: Stack(
         children: [
           Positioned.fill(child: Image.asset(
-            'assets/bg3.jpg',
+            'assets/bg.jpg',
             fit: BoxFit.cover,
           ),
           ),
           Container(
-            color: Colors.black.withOpacity(0.5), // Adjust the opacity here
+            color: Colors.white60, // Adjust the opacity here
           ),
           RefreshIndicator(
             onRefresh: _fetchWeather,
@@ -116,28 +116,26 @@ class _WeatherPageState extends State<WeatherPage> {
                       _weather?.cityName ?? 'Chargement de la ville...',
                       style: const TextStyle(
                           fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors
-                              .white), // Text color adjusted for visibility
+                          fontWeight: FontWeight.bold)
                     ),
                     Lottie.asset(
                       getWeatherAnimation(),
-                      height: 200,
+                      width: 250,
+                      height: 250,
                     ),
                     Text(
                       '${_weather?.temperature.round() ?? ''}°C',
                       style: const TextStyle(
                           fontSize: 45,
                           fontWeight: FontWeight.bold,
-                          color: Colors
-                              .white), // Text color adjusted for visibility
+                         ), 
                     ),
                     Text(
                       translateCondition(_weather?.mainCondition),
                       style: const TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white70),
+                          color: Colors.black54),
                     ),
                     const SizedBox(height: 50),
                   ],

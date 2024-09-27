@@ -101,7 +101,7 @@ class _WeatherPageState extends State<WeatherPage> {
           ),
           ),
           Container(
-            color: Colors.white60, // Adjust the opacity here
+            color: Colors.white60, 
           ),
           RefreshIndicator(
             onRefresh: _fetchWeather,

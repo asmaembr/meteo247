@@ -32,7 +32,7 @@ class Weather5day extends StatelessWidget {
   String getWeatherAnimationForForecast(Weather weather) {
     // Determine if it's day or night based on the hour
     int hour = weather.date.hour;
-    bool isDaytime = hour >= 6 && hour < 18; 
+    bool isDaytime = hour >= 6 && hour < 21; 
 
     switch (weather.mainCondition) {
       case 'Clear':

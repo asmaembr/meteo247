@@ -19,6 +19,7 @@ class WeatherService {
     if (response.statusCode == 200) {
       return Weather.fromJson(jsonDecode(response.body));
     } else {
+      print(response.body);
       throw Exception('Échec du chargement des données météo');
     }
   }
@@ -36,7 +37,6 @@ class WeatherService {
       Map<String, List<Weather>> dailyForecasts = {};
 
       for (var item in forecastList) {
-        // Extract the date as a string (e.g., "2024-09-27")
         String date = DateTime.fromMillisecondsSinceEpoch(item['dt'] * 1000)
             .toLocal()
             .toIso8601String()
@@ -52,7 +52,7 @@ class WeatherService {
         dailyForecasts[date]!.add(weather);
       }
 
-      return dailyForecasts; // Return a map of day and list of Weather objects
+      return dailyForecasts;
     } else {
       throw Exception('Failed to load the 5-day weather forecast');
     }

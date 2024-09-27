@@ -69,7 +69,6 @@ class Weather5day extends StatelessWidget {
                     date,
                     style: const TextStyle(
                       fontSize: 30,
-                      color: Colors.black87,
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
@@ -112,7 +111,6 @@ class Weather5day extends StatelessWidget {
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black54,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -123,7 +121,7 @@ class Weather5day extends StatelessWidget {
                     ),
                   ),
                   const Divider(
-                      height: 30, color: Colors.black26, thickness: 2),
+                      height: 30,  thickness: 2),
                 ],
               ),
             );

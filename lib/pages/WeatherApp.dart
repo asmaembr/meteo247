@@ -48,12 +48,13 @@ class _WeatherAppState extends State<WeatherApp> {
         children: [
           Container(
             decoration: const BoxDecoration(
-              image: DecorationImage(
+              color: Colors.white
+             /* image: DecorationImage(
                 image: AssetImage('assets/bg.jpg'), 
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
                   Colors.white54, BlendMode.lighten)
-              ),
+              ),*/
             ),
           ),
           PageView(

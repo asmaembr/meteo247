@@ -12,7 +12,7 @@ class WeatherApp extends StatefulWidget {
 }
 
 class _WeatherAppState extends State<WeatherApp> {
-  final _weatherService = WeatherService('6ee30ccea5da1fa9f196a2defde8ffde');
+  final _weatherService = WeatherService('65ca9262ff9f70b556c2ae208f510de9');
   Weather? _weather;
   Map<String, List<Weather>> _forecast = {};
   final PageController _pageController = PageController();

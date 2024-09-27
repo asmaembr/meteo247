@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'pages/weather_page.dart';
+import 'package:meteo247/pages/WeatherApp.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +13,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner : false,
-      home: WeatherPage(),
+      title: 'Météo 24/7',
+      home: WeatherApp(),
     );
   }
 }
